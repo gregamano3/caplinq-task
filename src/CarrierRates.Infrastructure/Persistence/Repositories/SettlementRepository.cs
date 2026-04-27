@@ -6,6 +6,9 @@ namespace CarrierRates.Infrastructure.Persistence.Repositories;
 
 public class SettlementRepository(AppDbContext dbContext) : ISettlementRepository
 {
+    /// <summary>
+    /// Checks whether a carrier has pending settlements or invoices.
+    /// </summary>
     public Task<bool> HasPendingAsync(Guid carrierConfigId, CancellationToken cancellationToken = default)
     {
         return dbContext.Settlements.AnyAsync(

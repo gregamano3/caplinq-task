@@ -6,6 +6,9 @@ namespace CarrierRates.Infrastructure.Persistence.Repositories;
 
 public class CarrierConfigRepository(AppDbContext dbContext) : ICarrierConfigRepository
 {
+    /// <summary>
+    /// Returns all carrier configurations.
+    /// </summary>
     public async Task<IReadOnlyCollection<CarrierConfig>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await dbContext.CarrierConfigs
@@ -13,6 +16,9 @@ public class CarrierConfigRepository(AppDbContext dbContext) : ICarrierConfigRep
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Returns enabled carrier configurations only.
+    /// </summary>
     public async Task<IReadOnlyCollection<CarrierConfig>> GetAllEnabledAsync(CancellationToken cancellationToken = default)
     {
         return await dbContext.CarrierConfigs

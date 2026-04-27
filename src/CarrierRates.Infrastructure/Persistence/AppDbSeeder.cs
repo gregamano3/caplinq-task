@@ -7,6 +7,9 @@ namespace CarrierRates.Infrastructure.Persistence;
 
 public static class AppDbSeeder
 {
+    /// <summary>
+    /// Seeds default carriers and users when running with an empty in-memory database.
+    /// </summary>
     public static async Task SeedAsync(AppDbContext dbContext, IPasswordHasher passwordHasher, CancellationToken cancellationToken = default)
     {
         if (!dbContext.CarrierConfigs.Any())

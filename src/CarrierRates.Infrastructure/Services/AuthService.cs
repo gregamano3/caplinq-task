@@ -15,6 +15,9 @@ public class AuthService(
     IOptions<JwtOptions> jwtOptions
 ) : IAuthService
 {
+    /// <summary>
+    /// Validates user credentials and issues a JWT access token for valid users.
+    /// </summary>
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken);

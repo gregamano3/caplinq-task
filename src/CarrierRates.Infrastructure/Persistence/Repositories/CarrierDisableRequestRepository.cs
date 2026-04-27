@@ -6,6 +6,9 @@ namespace CarrierRates.Infrastructure.Persistence.Repositories;
 
 public class CarrierDisableRequestRepository(AppDbContext dbContext) : ICarrierDisableRequestRepository
 {
+    /// <summary>
+    /// Adds a new carrier disable request.
+    /// </summary>
     public async Task AddAsync(CarrierDisableRequest entity, CancellationToken cancellationToken = default)
     {
         await dbContext.CarrierDisableRequests.AddAsync(entity, cancellationToken);

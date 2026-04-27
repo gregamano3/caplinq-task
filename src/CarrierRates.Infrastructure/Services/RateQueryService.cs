@@ -9,6 +9,9 @@ namespace CarrierRates.Infrastructure.Services;
 
 public class RateQueryService(ICarrierRateAggregator aggregator, IRateCache rateCache) : IRateQueryService
 {
+    /// <summary>
+    /// Resolves rates using cache-first behavior and falls back to carrier aggregation.
+    /// </summary>
     public async Task<AggregateResult<IReadOnlyCollection<ShippingRateResponse>>> QueryAsync(
         RateQuery request,
         CancellationToken cancellationToken = default

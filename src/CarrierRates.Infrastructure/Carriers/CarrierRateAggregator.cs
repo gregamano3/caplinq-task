@@ -10,6 +10,9 @@ public class CarrierRateAggregator(
     ICarrierConfigRepository carrierConfigRepository
 ) : ICarrierRateAggregator
 {
+    /// <summary>
+    /// Queries all enabled carriers in parallel and returns partial-success results when possible.
+    /// </summary>
     public async Task<AggregateResult<IReadOnlyCollection<ShippingRateResponse>>> QueryRatesAsync(
         RateQuery query,
         CancellationToken cancellationToken = default

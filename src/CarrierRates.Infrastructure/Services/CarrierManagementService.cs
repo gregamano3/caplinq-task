@@ -17,12 +17,18 @@ public class CarrierManagementService(
     IUserContext userContext
 ) : ICarrierManagementService
 {
+    /// <summary>
+    /// Returns all carrier configurations.
+    /// </summary>
     public async Task<Result<IReadOnlyCollection<CarrierConfig>>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var carriers = await carrierConfigRepository.GetAllAsync(cancellationToken);
         return Result<IReadOnlyCollection<CarrierConfig>>.Success(carriers);
     }
 
+    /// <summary>
+    /// Creates a new carrier configuration entry.
+    /// </summary>
     public async Task<Result<CarrierConfig>> CreateAsync(CreateCarrierRequest request, CancellationToken cancellationToken = default)
     {
         var existing = await carrierConfigRepository.GetByCarrierKeyAsync(request.CarrierKey, cancellationToken);
@@ -47,6 +53,9 @@ public class CarrierManagementService(
         return Result<CarrierConfig>.Success(entity);
     }
 
+    /// <summary>
+    /// Updates an existing carrier configuration.
+    /// </summary>
     public async Task<Result<CarrierConfig>> UpdateAsync(Guid carrierId, UpdateCarrierRequest request, CancellationToken cancellationToken = default)
     {
         var carrier = await carrierConfigRepository.GetByIdAsync(carrierId, cancellationToken);
@@ -66,6 +75,9 @@ public class CarrierManagementService(
         return Result<CarrierConfig>.Success(carrier);
     }
 
+    /// <summary>
+    /// Deletes an existing carrier configuration.
+    /// </summary>
     public async Task<Result> DeleteAsync(Guid carrierId, CancellationToken cancellationToken = default)
     {
         var carrier = await carrierConfigRepository.GetByIdAsync(carrierId, cancellationToken);
@@ -79,6 +91,9 @@ public class CarrierManagementService(
         return Result.Success();
     }
 
+    /// <summary>
+    /// Enables a carrier.
+    /// </summary>
     public async Task<Result> EnableAsync(Guid carrierId, CancellationToken cancellationToken = default)
     {
         var carrier = await carrierConfigRepository.GetByIdAsync(carrierId, cancellationToken);
@@ -95,6 +110,9 @@ public class CarrierManagementService(
         return Result.Success();
     }
 
+    /// <summary>
+    /// Disables a carrier directly after role and business-rule validation.
+    /// </summary>
     public async Task<Result> DisableAsync(Guid carrierId, DisableCarrierRequest request, CancellationToken cancellationToken = default)
     {
         if (userContext.Role != UserRole.Admin)
@@ -134,6 +152,9 @@ public class CarrierManagementService(
         return Result.Success();
     }
 
+    /// <summary>
+    /// Creates a disable request for later admin approval.
+    /// </summary>
     public async Task<Result<Guid>> RequestDisableAsync(
         Guid carrierId,
         DisableRequestCreate request,
@@ -160,6 +181,9 @@ public class CarrierManagementService(
         return Result<Guid>.Success(disableRequest.Id);
     }
 
+    /// <summary>
+    /// Approves a pending disable request and disables the target carrier.
+    /// </summary>
     public async Task<Result> ApproveDisableRequestAsync(Guid requestId, CancellationToken cancellationToken = default)
     {
         if (userContext.Role != UserRole.Admin)
@@ -203,6 +227,9 @@ public class CarrierManagementService(
         return Result.Success();
     }
 
+    /// <summary>
+    /// Rejects a pending disable request.
+    /// </summary>
     public async Task<Result> RejectDisableRequestAsync(Guid requestId, CancellationToken cancellationToken = default)
     {
         if (userContext.Role != UserRole.Admin)

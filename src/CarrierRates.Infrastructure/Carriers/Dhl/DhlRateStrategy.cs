@@ -17,6 +17,9 @@ public class DhlRateStrategy(
 
     public bool CanHandle(string carrierKey) => carrierKey.Equals(CarrierKeys.Dhl, StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Fetches DHL rates, retries transient failures, and maps to unified response format.
+    /// </summary>
     public async Task<Result<ShippingRateResponse>> GetRatesAsync(
         RateQuery query,
         CancellationToken cancellationToken = default

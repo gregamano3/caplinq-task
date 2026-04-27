@@ -17,6 +17,9 @@ public class FedExRateStrategy(
 
     public bool CanHandle(string carrierKey) => carrierKey.Equals(CarrierKeys.FedEx, StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Fetches FedEx rates, retries transient failures, and maps to unified response format.
+    /// </summary>
     public async Task<Result<ShippingRateResponse>> GetRatesAsync(
         RateQuery query,
         CancellationToken cancellationToken = default

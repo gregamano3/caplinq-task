@@ -17,6 +17,9 @@ public class UpsRateStrategy(
 
     public bool CanHandle(string carrierKey) => carrierKey.Equals(CarrierKeys.Ups, StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Fetches UPS rates, retries transient failures, and maps to unified response format.
+    /// </summary>
     public async Task<Result<ShippingRateResponse>> GetRatesAsync(
         RateQuery query,
         CancellationToken cancellationToken = default

@@ -13,6 +13,9 @@ public class JwtTokenService(IOptions<JwtOptions> jwtOptions) : IJwtTokenService
 {
     private readonly JwtOptions _options = jwtOptions.Value;
 
+    /// <summary>
+    /// Creates a signed JWT token containing subject, email, and role claims.
+    /// </summary>
     public string GenerateToken(AppUser user, DateTime expiresUtc)
     {
         var claims = new List<Claim>

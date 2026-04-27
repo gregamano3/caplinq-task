@@ -20,6 +20,9 @@ namespace CarrierRates.Infrastructure;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers infrastructure services, persistence, integrations, and concrete use-case implementations.
+    /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
