@@ -4,6 +4,9 @@ namespace CarrierRates.Infrastructure.Carriers.Dhl;
 
 public class DhlAdapter
 {
+    /// <summary>
+    /// Maps DHL-specific rate payloads into the unified domain response model.
+    /// </summary>
     public ShippingRateResponse ToUnified(DhlRateResponse response)
     {
         return new ShippingRateResponse(

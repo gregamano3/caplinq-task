@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace CarrierRates.Infrastructure.Carriers.Ups;
 
+/// <summary>
+/// UPS-specific request contract for rate retrieval.
+/// </summary>
 public sealed record UpsRateRequest(UpsShipment Shipment);
 
 public sealed record UpsShipment(
@@ -15,6 +18,9 @@ public sealed record UpsShipment(
 
 public sealed record UpsDimensions(decimal Length, decimal Width, decimal Height);
 
+/// <summary>
+/// UPS-specific response contract for rate retrieval.
+/// </summary>
 public sealed record UpsRateResponse(
     string Company,
     [property: JsonPropertyName("services")] IReadOnlyCollection<UpsService> Services

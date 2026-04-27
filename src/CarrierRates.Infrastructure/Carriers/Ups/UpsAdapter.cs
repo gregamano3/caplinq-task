@@ -4,6 +4,9 @@ namespace CarrierRates.Infrastructure.Carriers.Ups;
 
 public class UpsAdapter
 {
+    /// <summary>
+    /// Maps UPS-specific rate payloads into the unified domain response model.
+    /// </summary>
     public ShippingRateResponse ToUnified(UpsRateResponse response)
     {
         return new ShippingRateResponse(

@@ -2,6 +2,9 @@ namespace CarrierRates.Infrastructure.Auth;
 
 public class JwtOptions
 {
+    /// <summary>
+    /// Configuration section name used for JWT binding.
+    /// </summary>
     public const string SectionName = "Jwt";
 
     public string Issuer { get; set; } = "CarrierRates.Api";

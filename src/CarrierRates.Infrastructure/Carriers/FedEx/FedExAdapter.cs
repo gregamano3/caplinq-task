@@ -4,6 +4,9 @@ namespace CarrierRates.Infrastructure.Carriers.FedEx;
 
 public class FedExAdapter
 {
+    /// <summary>
+    /// Maps FedEx-specific rate payloads into the unified domain response model.
+    /// </summary>
     public ShippingRateResponse ToUnified(FedExRateResponse response)
     {
         return new ShippingRateResponse(
