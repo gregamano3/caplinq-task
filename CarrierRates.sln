@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarrierRates.Application", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarrierRates.Infrastructure", "src\CarrierRates.Infrastructure\CarrierRates.Infrastructure.csproj", "{556444C7-25C0-403A-A7CE-25CBAB09CDB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarrierRates.Api", "src\CarrierRates.Api\CarrierRates.Api.csproj", "{61EEE14E-5198-43CA-8829-A42512F6AD81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +34,15 @@ Global
 		{556444C7-25C0-403A-A7CE-25CBAB09CDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{556444C7-25C0-403A-A7CE-25CBAB09CDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{556444C7-25C0-403A-A7CE-25CBAB09CDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61EEE14E-5198-43CA-8829-A42512F6AD81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61EEE14E-5198-43CA-8829-A42512F6AD81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61EEE14E-5198-43CA-8829-A42512F6AD81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61EEE14E-5198-43CA-8829-A42512F6AD81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1245FE97-F5A9-4766-88C4-8831E969007F} = {56312B9C-41BC-4D22-A2AF-3AC115E1E6F2}
 		{95BDB966-8A59-4E71-998F-6D56FA0C02B7} = {56312B9C-41BC-4D22-A2AF-3AC115E1E6F2}
 		{556444C7-25C0-403A-A7CE-25CBAB09CDB8} = {56312B9C-41BC-4D22-A2AF-3AC115E1E6F2}
+		{61EEE14E-5198-43CA-8829-A42512F6AD81} = {56312B9C-41BC-4D22-A2AF-3AC115E1E6F2}
 	EndGlobalSection
 EndGlobal
