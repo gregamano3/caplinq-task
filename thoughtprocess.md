@@ -217,3 +217,15 @@
   - Result pattern for robust partial-success/error handling.
 - Summary judgment:
   - current pattern usage is appropriate for mid-level assessment expectations, with main improvement area being strategy boilerplate reduction.
+
+## 19) Testing approach updates
+- Assertion framework choice:
+  - removed `FluentAssertions` to avoid external licensing concerns/warnings in assessment output,
+  - standardized on built-in xUnit `Assert` + `Moq`.
+- Why:
+  - keeps dependencies minimal and interviewer-friendly,
+  - avoids non-functional noise in CI/test runs.
+- Coverage focus implemented:
+  - `AuthService` login success/failure,
+  - `RateQueryService` cache hit/miss behavior,
+  - `CarrierManagementService` disable business rules (`only active`, blocking shipments, pending settlement, role check, happy path).

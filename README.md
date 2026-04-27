@@ -6,7 +6,8 @@ Web API assessment project for aggregating shipping rates from multiple carriers
 - `Domain` layer: implemented
 - `Application` layer: implemented (contracts/abstractions only)
 - `Infrastructure` layer: implemented
-- `API` layer: pending
+- `API` layer: implemented
+- `Unit tests`: implemented (xUnit + Moq)
 
 Implementation is intentionally staged and reviewed per layer:
 1. Domain
@@ -21,15 +22,15 @@ Implementation is intentionally staged and reviewed per layer:
 - JWT bearer auth (minimal, seeded users)
 - In-memory cache (`IMemoryCache`)
 - HttpClientFactory for carrier calls
-- Swagger/OpenAPI (planned in API)
-- xUnit + mocking (planned in tests)
+- Swagger/OpenAPI (with bearer token support)
+- xUnit + Moq
 
 ## Solution Structure
 - `src/CarrierRates.Domain` - entities, enums, value models, constants
 - `src/CarrierRates.Application` - use-case contracts, abstractions, result models
 - `src/CarrierRates.Infrastructure` - EF context, repositories, auth, cache, carrier adapters/strategies, service implementations
-- `src/CarrierRates.Api` - pending
-- `tests` - pending test projects
+- `src/CarrierRates.Api` - controllers, JWT auth wiring, Swagger, mock carrier endpoints
+- `tests/CarrierRates.UnitTests` - service-level unit tests
 
 ## Prerequisites
 - .NET SDK 8.0.x installed
@@ -45,6 +46,21 @@ From repository root:
 dotnet build CarrierRates.sln
 ```
 
+## Test
+From repository root:
+```bash
+dotnet test CarrierRates.sln
+```
+
+## Seeded Users
+Default users seeded at startup (in-memory database):
+- Admin:
+  - email: `admin@test.com`
+  - password: `Admin123!`
+- User:
+  - email: `user@test.com`
+  - password: `User123!`
+
 ## Notes on Design Direction
 - Carrier keys:
   - Built-in seed keys (`fedex`, `ups`, `dhl`) may exist as constants for seed safety.
@@ -57,12 +73,11 @@ dotnet build CarrierRates.sln
   - `AggregateResult<T>` for rate aggregation partial-success behavior.
 
 ## Planned Next Step
-- Implement `API` layer:
-  - Controllers for auth, rates, and carrier management
-  - JWT authentication/authorization middleware and role policies
-  - `IUserContext` implementation from claims
-  - Swagger setup with bearer token support
-  - Mock carrier endpoints for FedEx/UPS/DHL payload compatibility
+- Harden and refine:
+  - carrier strategy resiliency (retry/timeout),
+  - centralize carrier HTTP error handling,
+  - improve config-driven client setup (base URL + headers),
+  - expand tests (adapters, aggregator failures, controller mappings).
 
 ## Infrastructure Improvement Backlog (Carrier Module)
 - Centralize repeated HTTP error handling and mapping logic across carrier strategies.
@@ -70,4 +85,7 @@ dotnet build CarrierRates.sln
 - Include carrier credential/header application from `CarrierConfig` (`ApiKey` usage).
 - Move base address/headers setup into client factory configuration to avoid per-call mutation.
 - Add explicit carrier integration tests for adapter mapping and strategy failure paths.
+
+## Design Notes
+- Detailed implementation reasoning and pattern decisions are documented in [`thoughtprocess.md`](./thoughtprocess.md).
 
