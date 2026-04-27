@@ -1,0 +1,90 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "CarrierRates.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/CarrierRates.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CarrierRates.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CarrierRates.Domain/1.0.0": {
+      "type": "project",
+      "path": "../CarrierRates.Domain/CarrierRates.Domain.csproj",
+      "msbuildProject": "../CarrierRates.Domain/CarrierRates.Domain.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "CarrierRates.Domain >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "/home/gregoriogayleamanoiii/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/run/media/gregoriogayleamanoiii/New Volume/Dev/caplinq-v2/src/CarrierRates.Application/CarrierRates.Application.csproj",
+      "projectName": "CarrierRates.Application",
+      "projectPath": "/run/media/gregoriogayleamanoiii/New Volume/Dev/caplinq-v2/src/CarrierRates.Application/CarrierRates.Application.csproj",
+      "packagesPath": "/home/gregoriogayleamanoiii/.nuget/packages/",
+      "outputPath": "/run/media/gregoriogayleamanoiii/New Volume/Dev/caplinq-v2/src/CarrierRates.Application/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/home/gregoriogayleamanoiii/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "/usr/lib64/dotnet/library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "/run/media/gregoriogayleamanoiii/New Volume/Dev/caplinq-v2/src/CarrierRates.Domain/CarrierRates.Domain.csproj": {
+              "projectPath": "/run/media/gregoriogayleamanoiii/New Volume/Dev/caplinq-v2/src/CarrierRates.Domain/CarrierRates.Domain.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

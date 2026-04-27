@@ -1,0 +1,3 @@
+namespace CarrierRates.Application.Common;
+
+public sealed record Error(string Code, string Message, string? Target = null);
