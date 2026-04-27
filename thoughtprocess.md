@@ -95,3 +95,125 @@
   - explicitly handle malformed payloads and non-JSON responses with stable error codes.
 - Improve testability:
   - add focused tests for adapter mapping and strategy error branches before API expansion.
+
+## 13) Infrastructure is the runtime center
+- Yes, most of the real behavior currently lives in Infrastructure by design:
+  - data access and state checks (repositories),
+  - auth/token concerns,
+  - carrier I/O and response adaptation,
+  - orchestration/caching through concrete services.
+- Application defines the "what"; Infrastructure currently defines the "how".
+- This is acceptable for this assessment, but it means infra code quality directly determines reliability.
+
+## 14) Infrastructure flow (current end-to-end path)
+- Rate query flow:
+  1. `RateQueryService` checks cache.
+  2. cache miss triggers `CarrierRateAggregator`.
+  3. aggregator loads enabled carriers from DB and resolves matching strategies.
+  4. strategies call external carrier endpoints and map responses via adapters.
+  5. partial success is returned with carrier-level warnings/errors.
+  6. successful aggregate response is cached.
+- Carrier disable flow:
+  1. `CarrierManagementService` enforces role and business rules.
+  2. reads enabled-carrier count + shipment/settlement blocking flags.
+  3. writes carrier state and disable request audit record.
+  4. persists through unit-of-work boundary.
+
+## 15) Key tradeoffs and risks in current infra
+- Tradeoff: fast delivery vs strict layering purity.
+  - service implementations currently sit in Infrastructure for speed.
+  - acceptable now, but long-term this can blur boundaries.
+- Tradeoff: simple hashing vs production-grade password security.
+  - SHA256 implementation is assessment-friendly, but PBKDF2/bcrypt would be preferred in real systems.
+- Risk: per-strategy duplicated HTTP handling can diverge over time.
+- Risk: client base URL/header mutation inside strategies can become error-prone under extension.
+- Risk: transient upstream failures not yet protected by explicit retry/timeout policy.
+
+## 16) Infra refinement plan before/while API wiring
+- Priority 1: stabilize outbound client behavior.
+  - configure per-carrier named clients with base URL + auth header from config,
+  - keep strategy focused on payload conversion and response interpretation.
+- Priority 2: add resilience policy.
+  - retry + timeout for transient failures,
+  - preserve partial-success contract.
+- Priority 3: reduce duplication.
+  - extract shared strategy helper for request execution and error mapping.
+- Priority 4: add test seam clarity.
+  - make strategy/adapters easily unit-testable with fake handlers.
+- Priority 5: define stable error catalog.
+  - ensure error codes/messages are consistent across all carrier paths.
+
+## 17) Design patterns used (and why)
+
+### Strategy Pattern
+- Where used:
+  - `ICarrierRateStrategy`
+  - `FedExRateStrategy`, `UpsRateStrategy`, `DhlRateStrategy`
+  - `CarrierRateAggregator` selects strategy by `CanHandle(carrierKey)`.
+- Why:
+  - each carrier has different request/response contract and failure behavior,
+  - avoids `switch`/`if-else` branching explosion in one service,
+  - enables adding carriers without modifying existing strategy classes (OCP-friendly).
+- Current gap:
+  - strategy implementations share repeated HTTP/error boilerplate.
+- Improvement:
+  - introduce shared strategy helper/base executor to reduce duplication.
+
+### Adapter Pattern
+- Where used:
+  - `FedExAdapter`, `UpsAdapter`, `DhlAdapter`.
+- Why:
+  - each carrier response shape differs (`serviceOptions`, `services`, `options`),
+  - adapters map carrier-specific contracts to unified `ShippingRateResponse`.
+- Benefit:
+  - keeps mapping logic isolated from orchestration and controller concerns.
+- Improvement:
+  - move currency behavior to config/policy object if multi-currency becomes needed.
+
+### Unit of Work Pattern
+- Where used:
+  - `IUnitOfWork` + `UnitOfWork` wrapping `AppDbContext.SaveChangesAsync`.
+  - service methods call repositories then commit once.
+- Why:
+  - defines explicit persistence boundary for each use case,
+  - keeps services in control of when state transitions are finalized.
+- Benefit:
+  - easier to reason about transactional intent in business flows.
+- Current constraint:
+  - EF InMemory is not a true transactional store; behavior is sufficient for assessment but not equivalent to relational DB transactions.
+
+### Repository Pattern
+- Where used:
+  - `ICarrierConfigRepository`, `ICarrierDisableRequestRepository`, `IShipmentProcessRepository`, `ISettlementRepository`, `IAppUserRepository`.
+- Why:
+  - abstracts storage details from service logic,
+  - supports cleaner unit testing by mocking repository interfaces.
+- Deliberate choice:
+  - domain-specific repositories instead of a generic repository to keep business rule code readable.
+
+### Dependency Injection Pattern
+- Where used:
+  - `DependencyInjection.AddInfrastructure(...)` registers concrete implementations for abstractions.
+- Why:
+  - decouples construction from usage,
+  - allows swapping implementations (e.g., cache, auth, repositories) with minimal code changes.
+
+### Result Pattern (operational pattern)
+- Where used:
+  - `Result`, `Result<T>`, `AggregateResult<T>` returned by services/strategies.
+- Why:
+  - represents expected business and integration outcomes without exception-driven flow,
+  - supports partial success for multi-carrier aggregation with carrier-level errors.
+- Benefit:
+  - easier controller mapping and test assertions.
+
+## 18) Pattern alignment vs assessment requirements
+- Explicitly required and covered:
+  - Strategy Pattern: implemented in carrier selection and execution.
+  - Adapter Pattern: implemented in response normalization.
+  - Open/Closed Principle: supported via new strategy + adapter + config path.
+- Supportive patterns added:
+  - Repository + Unit of Work for persistence consistency,
+  - Result pattern for robust partial-success/error handling.
+- Summary judgment:
+  - current pattern usage is appropriate for mid-level assessment expectations, with main improvement area being strategy boilerplate reduction.
