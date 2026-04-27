@@ -5,7 +5,7 @@ Web API assessment project for aggregating shipping rates from multiple carriers
 ## Current Status
 - `Domain` layer: implemented
 - `Application` layer: implemented (contracts/abstractions only)
-- `Infrastructure` layer: pending
+- `Infrastructure` layer: implemented
 - `API` layer: pending
 
 Implementation is intentionally staged and reviewed per layer:
@@ -17,14 +17,17 @@ Implementation is intentionally staged and reviewed per layer:
 ## Tech Stack
 - .NET 8 (pinned via `global.json`)
 - C#
-- EF Core InMemory (planned in Infrastructure)
+- EF Core InMemory
+- JWT bearer auth (minimal, seeded users)
+- In-memory cache (`IMemoryCache`)
+- HttpClientFactory for carrier calls
 - Swagger/OpenAPI (planned in API)
 - xUnit + mocking (planned in tests)
 
 ## Solution Structure
 - `src/CarrierRates.Domain` - entities, enums, value models, constants
 - `src/CarrierRates.Application` - use-case contracts, abstractions, result models
-- `src/CarrierRates.Infrastructure` - pending
+- `src/CarrierRates.Infrastructure` - EF context, repositories, auth, cache, carrier adapters/strategies, service implementations
 - `src/CarrierRates.Api` - pending
 - `tests` - pending test projects
 
@@ -47,16 +50,24 @@ dotnet build CarrierRates.sln
   - Built-in seed keys (`fedex`, `ups`, `dhl`) may exist as constants for seed safety.
   - Runtime source of truth is carrier configuration in database (in-memory for assessment).
 - Auth direction:
-  - Minimal JWT with seeded users/roles (`Admin`, `User`) is planned.
+  - Minimal JWT with seeded users/roles (`Admin`, `User`) is implemented in Infrastructure.
   - Full ASP.NET Identity is intentionally out of scope to avoid over-engineering.
 - Result pattern:
   - `Result<T>` for standard command/query outcomes.
   - `AggregateResult<T>` for rate aggregation partial-success behavior.
 
 ## Planned Next Step
-- Implement `Infrastructure` layer:
-  - EF Core InMemory context and repositories
-  - JWT token service + password hasher
-  - in-memory rate cache implementation
-  - carrier API clients, adapters, and strategies
+- Implement `API` layer:
+  - Controllers for auth, rates, and carrier management
+  - JWT authentication/authorization middleware and role policies
+  - `IUserContext` implementation from claims
+  - Swagger setup with bearer token support
+  - Mock carrier endpoints for FedEx/UPS/DHL payload compatibility
+
+## Infrastructure Improvement Backlog (Carrier Module)
+- Centralize repeated HTTP error handling and mapping logic across carrier strategies.
+- Add retry policy (Polly) and timeout policy per carrier endpoint.
+- Include carrier credential/header application from `CarrierConfig` (`ApiKey` usage).
+- Move base address/headers setup into client factory configuration to avoid per-call mutation.
+- Add explicit carrier integration tests for adapter mapping and strategy failure paths.
 

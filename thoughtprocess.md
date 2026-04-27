@@ -72,3 +72,26 @@
   - adding a carrier does not require editing a central switch statement,
   - runtime matching stays aligned with CRUD-configured carrier keys.
 - `CarrierKeys` remains useful for seed defaults only, not as runtime authority.
+
+## 11) Infrastructure checkpoint assessment
+- Current Infrastructure implementation is functional and aligned with requirements baseline:
+  - repositories + unit of work,
+  - minimal JWT support + seeded users,
+  - caching support,
+  - carrier adapters, strategies, and aggregation.
+- This is good enough to proceed to API wiring.
+
+## 12) Carrier infrastructure improvements (recommended)
+- Remove repeated strategy boilerplate:
+  - strategy classes currently duplicate status-code/error/deserialize patterns,
+  - refactor toward shared helper/base pattern for consistency.
+- Apply resilience policies:
+  - add retry + timeout policies (Polly) per carrier client,
+  - keep partial success behavior while surfacing carrier-specific warnings.
+- Strengthen carrier config usage:
+  - ensure `ApiKey` from `CarrierConfig` is applied as outbound auth header,
+  - configure base URL and default headers in client setup rather than mutating per call.
+- Tighten edge handling:
+  - explicitly handle malformed payloads and non-JSON responses with stable error codes.
+- Improve testability:
+  - add focused tests for adapter mapping and strategy error branches before API expansion.
