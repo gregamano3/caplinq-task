@@ -48,3 +48,27 @@
   3. Infrastructure
   4. API
 - This reduces rework and makes requirement validation easier per stage.
+
+## 7) Application layer decisions
+- Application layer only defines contracts and use-case boundaries; it does not know EF, HTTP details, or ASP.NET controllers.
+- Result modeling choices:
+  - `Result` / `Result<T>` for command-style and single-object outcomes,
+  - `AggregateResult<T>` for carrier aggregation where partial success is expected.
+- This split avoids overloading one result type and keeps controller mapping straightforward.
+
+## 8) Why repository abstractions are separated
+- Separate interfaces by concern (`ICarrierConfigRepository`, `IShipmentProcessRepository`, etc.) instead of one generic repository.
+- Reason: business rules map cleanly to domain concepts and remain readable/testable.
+- `IUnitOfWork` is included to keep transaction/save boundary explicit in services.
+
+## 9) Why `IUserContext` with JWT
+- JWT validates identity/role at API boundary.
+- `IUserContext` gives Application services a framework-agnostic way to read current user id/email/role.
+- This avoids direct dependency on `HttpContext` in business logic.
+
+## 10) Carrier strategy extensibility choice
+- `ICarrierRateStrategy` exposes `CanHandle(carrierKey)` instead of hard-coded switch logic.
+- Benefits:
+  - adding a carrier does not require editing a central switch statement,
+  - runtime matching stays aligned with CRUD-configured carrier keys.
+- `CarrierKeys` remains useful for seed defaults only, not as runtime authority.
