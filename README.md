@@ -24,6 +24,10 @@ Implementation is intentionally staged and reviewed per layer:
 - HttpClientFactory for carrier calls
 - Swagger/OpenAPI (with bearer token support)
 - xUnit + Moq
+- Docker + Docker Compose
+- Portainer (app hosting)
+- Nginx Proxy Manager (reverse proxy)
+- Cloudflare DNS + Tunnel
 
 ## Solution Structure
 - `src/CarrierRates.Domain` - entities, enums, value models, constants
@@ -52,6 +56,21 @@ From repository root:
 dotnet test CarrierRates.sln
 ```
 
+## Docker Run
+Build and run with Docker Compose:
+```bash
+docker compose up -d --build
+```
+
+Stop:
+```bash
+docker compose down
+```
+
+App port exposed by default:
+- `http://localhost:8080`
+- Swagger: `http://localhost:8080/swagger`
+
 ## Seeded Users
 Default users seeded at startup (in-memory database):
 - Admin:
@@ -60,6 +79,62 @@ Default users seeded at startup (in-memory database):
 - User:
   - email: `user@test.com`
   - password: `User123!`
+
+## API Usage Guide
+After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
+- `http://localhost:8080/swagger` (Docker)
+- `http://localhost:5281/swagger` (local dev default)
+
+### 1) Login and get JWT
+- Use `POST /api/auth/login`
+- Example request body:
+```json
+{
+  "email": "admin@test.com",
+  "password": "Admin123!"
+}
+```
+- Copy `accessToken` from the response.
+
+### 2) Authorize in Swagger
+- Click **Authorize** (top-right).
+- Enter: `Bearer <your_access_token>`
+- Confirm authorization.
+
+### 3) Query shipping rates
+- Use `POST /api/rates/query`
+- Example request body:
+```json
+{
+  "origin": { "postalCode": "12345", "countryCode": "US" },
+  "destination": { "postalCode": "67890", "countryCode": "US" },
+  "package": {
+    "weight": 5,
+    "dimensions": { "length": 10, "width": 5, "height": 5 }
+  }
+}
+```
+- Expected: unified rates for enabled carriers (`FedEx`, `UPS`, `DHL`) with optional warnings.
+
+### 4) Carrier management (admin)
+- `GET /api/carriers` - list carrier configs
+- `POST /api/carriers` - add carrier config
+- `PUT /api/carriers/{carrierId}` - update config (including `baseUrl`)
+- `DELETE /api/carriers/{carrierId}` - remove config
+- `PATCH /api/carriers/{carrierId}/enable` - enable carrier
+- `PATCH /api/carriers/{carrierId}/disable` - direct disable (admin only, with reason)
+
+### 5) Disable request workflow
+- As `User`:
+  - `POST /api/carriers/{carrierId}/disable-requests`
+- As `Admin`:
+  - `PATCH /api/carriers/{carrierId}/disable-requests/{requestId}/approve`
+  - `PATCH /api/carriers/{carrierId}/disable-requests/{requestId}/reject`
+
+### 6) Mock carrier endpoints (for local assessment flow)
+- `POST /api/fedex/rates`
+- `POST /api/dhl/rates`
+- `POST /api/ups/shipping-rates`
 
 ## Notes on Design Direction
 - Carrier keys:
@@ -88,4 +163,11 @@ Default users seeded at startup (in-memory database):
 
 ## Design Notes
 - Detailed implementation reasoning and pattern decisions are documented in [`thoughtprocess.md`](./thoughtprocess.md).
+
+## Deployment Notes
+- Intended public URL: [caplinq.gregdoesdev.xyz](https://caplinq.gregdoesdev.xyz)
+- Suggested deployment chain:
+  1. Run container stack via Docker/Portainer.
+  2. Route inbound traffic with Nginx Proxy Manager to `caplinq-api:8080` (or host `:8080`).
+  3. Point Cloudflare DNS/tunnel to NPM endpoint.
 

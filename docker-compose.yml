@@ -1,0 +1,15 @@
+services:
+  caplinq-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: caplinq-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Jwt__Issuer: CarrierRates.Api
+      Jwt__Audience: CarrierRates.Client
+      Jwt__SigningKey: super-secret-signing-key-change-me-12345
+      Jwt__AccessTokenMinutes: 60

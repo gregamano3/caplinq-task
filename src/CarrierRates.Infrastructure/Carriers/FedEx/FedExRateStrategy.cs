@@ -13,6 +13,8 @@ public class FedExRateStrategy(
     FedExAdapter adapter
 ) : ICarrierRateStrategy
 {
+    private const int MaxAttempts = 3;
+
     public bool CanHandle(string carrierKey) => carrierKey.Equals(CarrierKeys.FedEx, StringComparison.OrdinalIgnoreCase);
 
     public async Task<Result<ShippingRateResponse>> GetRatesAsync(
@@ -45,12 +47,49 @@ public class FedExRateStrategy(
 
             var client = httpClientFactory.CreateClient("FedExClient");
             client.BaseAddress = new Uri(config.BaseUrl);
-            var response = await client.PostAsJsonAsync("/api/fedex/rates", payload, cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
+            HttpResponseMessage? response = null;
+            Exception? lastException = null;
+            for (var attempt = 1; attempt <= MaxAttempts; attempt++)
             {
+                try
+                {
+                    response = await client.PostAsJsonAsync("/api/fedex/rates", payload, cancellationToken);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        break;
+                    }
+
+                    if (attempt < MaxAttempts && IsTransientStatusCode((int)response.StatusCode))
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(150 * attempt), cancellationToken);
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    if (attempt < MaxAttempts)
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(150 * attempt), cancellationToken);
+                        continue;
+                    }
+                }
+
+                break;
+            }
+
+            if (response is null || !response.IsSuccessStatusCode)
+            {
+                if (lastException is not null)
+                {
+                    return Result<ShippingRateResponse>.Failure(
+                        new Error("carrier.fedex.exception", $"FedEx request failed: {lastException.Message}")
+                    );
+                }
+
                 return Result<ShippingRateResponse>.Failure(
-                    new Error("carrier.fedex.http_error", $"FedEx API failed with {(int)response.StatusCode}.")
+                    new Error("carrier.fedex.http_error", $"FedEx API failed with {(int?)response?.StatusCode ?? 0}.")
                 );
             }
 
@@ -70,5 +109,10 @@ public class FedExRateStrategy(
                 new Error("carrier.fedex.exception", $"FedEx request failed: {ex.Message}")
             );
         }
+    }
+
+    private static bool IsTransientStatusCode(int statusCode)
+    {
+        return statusCode == 408 || statusCode == 429 || statusCode >= 500;
     }
 }
