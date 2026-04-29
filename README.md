@@ -98,8 +98,14 @@ After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
 
 ### 2) Authorize in Swagger
 - Click **Authorize** (top-right).
-- Enter: `Bearer <your_access_token>`
+- Paste the JWT token only (without the `Bearer ` prefix) to avoid generating `Bearer Bearer <token>`.
+- If your Swagger UI instance does not auto-prefix, enter: `Bearer <your_access_token>`.
 - Confirm authorization.
+
+#### Curl authorization header format
+- Always send exactly one `Bearer` prefix:
+  - Correct: `Authorization: Bearer <your_access_token>`
+  - Incorrect: `Authorization: Bearer Bearer <your_access_token>`
 
 ### 3) Query shipping rates
 - Use `POST /api/rates/query`
@@ -166,7 +172,7 @@ After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
 - Detailed implementation reasoning and pattern decisions: [`thoughtprocess.md`](./thoughtprocess.md)
 
 ## Deployment Notes
-- Intended public URL: [caplinq.gregdoesdev.xyz](https://caplinq.gregdoesdev.xyz)
+- Live demo: [caplinq.gregdoesdev.xyz/swagger/index.html](https://caplinq.gregdoesdev.xyz/swagger/index.html)
 - Suggested deployment chain:
   1. Run container stack via Docker/Portainer.
   2. Route inbound traffic with Nginx Proxy Manager to `caplinq-api:8080` (or host `:8080`).
