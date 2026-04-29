@@ -22,3 +22,10 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Environment files
+.env
+.env.*
+*.env
+*.env.*
+!.env.example

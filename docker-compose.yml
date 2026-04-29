@@ -9,6 +9,7 @@ services:
       - "8011:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      CARRIER_BASE_URL: ${CARRIER_BASE_URL:-http://caplinq-api:8080}
       Jwt__Issuer: CarrierRates.Api
       Jwt__Audience: CarrierRates.Client
       Jwt__SigningKey: super-secret-signing-key-change-me-12345

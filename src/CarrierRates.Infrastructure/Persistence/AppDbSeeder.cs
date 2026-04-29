@@ -10,8 +10,16 @@ public static class AppDbSeeder
     /// <summary>
     /// Seeds default carriers and users when running with an empty in-memory database.
     /// </summary>
-    public static async Task SeedAsync(AppDbContext dbContext, IPasswordHasher passwordHasher, CancellationToken cancellationToken = default)
+    public static async Task SeedAsync(
+        AppDbContext dbContext,
+        IPasswordHasher passwordHasher,
+        string? carrierBaseUrl = null,
+        CancellationToken cancellationToken = default)
     {
+        var resolvedCarrierBaseUrl = string.IsNullOrWhiteSpace(carrierBaseUrl)
+            ? "https://localhost:5001"
+            : carrierBaseUrl.TrimEnd('/');
+
         if (!dbContext.CarrierConfigs.Any())
         {
             dbContext.CarrierConfigs.AddRange(
@@ -19,7 +27,7 @@ public static class AppDbSeeder
                 {
                     CarrierKey = CarrierKeys.FedEx,
                     DisplayName = "FedEx",
-                    BaseUrl = "https://localhost:5001",
+                    BaseUrl = resolvedCarrierBaseUrl,
                     ApiKey = "fedex-mock-key",
                     IsEnabled = true
                 },
@@ -27,7 +35,7 @@ public static class AppDbSeeder
                 {
                     CarrierKey = CarrierKeys.Ups,
                     DisplayName = "UPS",
-                    BaseUrl = "https://localhost:5001",
+                    BaseUrl = resolvedCarrierBaseUrl,
                     ApiKey = "ups-mock-key",
                     IsEnabled = true
                 },
@@ -35,7 +43,7 @@ public static class AppDbSeeder
                 {
                     CarrierKey = CarrierKeys.Dhl,
                     DisplayName = "DHL",
-                    BaseUrl = "https://localhost:5001",
+                    BaseUrl = resolvedCarrierBaseUrl,
                     ApiKey = "dhl-mock-key",
                     IsEnabled = true
                 }

@@ -76,7 +76,8 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-    await AppDbSeeder.SeedAsync(dbContext, passwordHasher);
+    var carrierBaseUrl = builder.Configuration["CARRIER_BASE_URL"];
+    await AppDbSeeder.SeedAsync(dbContext, passwordHasher, carrierBaseUrl);
 }
 
 app.UseSwagger();

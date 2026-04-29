@@ -178,3 +178,10 @@ After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
   2. Route inbound traffic with Nginx Proxy Manager to `caplinq-api:8080` (or host `:8080`).
   3. Point Cloudflare DNS/tunnel to NPM endpoint.
 
+### Docker/Portainer Test Env Variable
+- Use one base URL for all test carrier adapters via:
+  - `CARRIER_BASE_URL=http://caplinq-api:8080`
+- `docker-compose.yml` already maps this env var and defaults to `http://caplinq-api:8080`.
+- In Portainer, add this env var in your stack/environment settings before deploy/update.
+- Seeder behavior: this value is applied when default carrier configs are first seeded into an empty database.
+
