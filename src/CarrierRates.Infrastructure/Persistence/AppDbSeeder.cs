@@ -47,8 +47,8 @@ public static class AppDbSeeder
             dbContext.Users.AddRange(
                 new AppUser
                 {
-                    Email = "admin@test.com",
-                    PasswordHash = passwordHasher.Hash("Admin123!"),
+                    Email = "admin@example.com",
+                    PasswordHash = passwordHasher.Hash("password1234"),
                     Role = UserRole.Admin,
                     IsActive = true
                 },

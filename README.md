@@ -74,8 +74,8 @@ App port exposed by default:
 ## Seeded Users
 Default users seeded at startup (in-memory database):
 - Admin:
-  - email: `admin@test.com`
-  - password: `Admin123!`
+  - email: `admin@example.com`
+  - password: `password1234`
 - User:
   - email: `user@test.com`
   - password: `User123!`
@@ -90,8 +90,8 @@ After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
 - Example request body:
 ```json
 {
-  "email": "admin@test.com",
-  "password": "Admin123!"
+  "email": "admin@example.com",
+  "password": "password1234"
 }
 ```
 - Copy `accessToken` from the response.
@@ -162,7 +162,8 @@ After running the app (`dotnet run` or `docker compose up -d`), open Swagger:
 - Add explicit carrier integration tests for adapter mapping and strategy failure paths.
 
 ## Design Notes
-- Detailed implementation reasoning and pattern decisions are documented in [`thoughtprocess.md`](./thoughtprocess.md).
+- Step-by-step build process, planning, and AI collaboration narrative: [`BUILD_JOURNEY.md`](./BUILD_JOURNEY.md)
+- Detailed implementation reasoning and pattern decisions: [`thoughtprocess.md`](./thoughtprocess.md)
 
 ## Deployment Notes
 - Intended public URL: [caplinq.gregdoesdev.xyz](https://caplinq.gregdoesdev.xyz)

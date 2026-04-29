@@ -40,18 +40,18 @@ public class AuthServiceTests
 
         var user = new AppUser
         {
-            Email = "admin@test.com",
+            Email = "admin@example.com",
             PasswordHash = "hash",
             Role = UserRole.Admin
         };
 
         userRepo.Setup(x => x.GetByEmailAsync(user.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
-        passwordHasher.Setup(x => x.Verify("Admin123!", user.PasswordHash)).Returns(true);
+        passwordHasher.Setup(x => x.Verify("password1234", user.PasswordHash)).Returns(true);
         tokenService.Setup(x => x.GenerateToken(user, It.IsAny<DateTime>())).Returns("jwt-token");
 
         var sut = new AuthService(userRepo.Object, passwordHasher.Object, tokenService.Object, options);
-        var result = await sut.LoginAsync(new LoginRequest(user.Email, "Admin123!"), CancellationToken.None);
+        var result = await sut.LoginAsync(new LoginRequest(user.Email, "password1234"), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
