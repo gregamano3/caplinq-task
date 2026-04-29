@@ -17,7 +17,7 @@ public static class AppDbSeeder
         CancellationToken cancellationToken = default)
     {
         var resolvedCarrierBaseUrl = string.IsNullOrWhiteSpace(carrierBaseUrl)
-            ? "https://localhost:5001"
+            ? "http://localhost:5281"
             : carrierBaseUrl.TrimEnd('/');
 
         if (!dbContext.CarrierConfigs.Any())
